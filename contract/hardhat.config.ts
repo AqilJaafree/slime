@@ -39,19 +39,28 @@ const config: HardhatUserConfig = {
       url: "https://eth-sepolia.g.alchemy.com/v2/3TD4Qp-ol2qGp69d3LBv3lBWlHrvaynY",
       accounts: [configVariable("SEPOLIA_PRIVATE_KEY")],
     },
+    // For hashscan-verify, use "testnet" not "hedera"
+    testnet: {
+      type: "http",
+      chainType: "l1",
+      url: "https://testnet.hashio.io/api",
+      accounts: [configVariable("HEDERA_PRIVATE_KEY")],
+      // chainId: 296, // ← Remove this, hashscan-verify auto-detects
+    },
+    // Or keep both if you want to use "hedera" elsewhere
     hedera: {
       type: "http",
       chainType: "l1",
       url: "https://testnet.hashio.io/api",
-      chainId: 296, // ✅ FIXED
       accounts: [configVariable("HEDERA_PRIVATE_KEY")],
     },
   },
-  verify: {
-    etherscan: {
-      apiKey: configVariable("ETHERSCAN_API_KEY"),
-    },
-  },
+  // Remove this section - hashscan-verify doesn't need it
+  // verify: {
+  //   etherscan: {
+  //     apiKey: configVariable("ETHERSCAN_API_KEY"),
+  //   },
+  // },
 };
 
 export default config;
