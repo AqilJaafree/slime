@@ -8,6 +8,7 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 contract ProposalFutarchy is Ownable, ReentrancyGuard {
     
     IERC20 public immutable PYUSD;
+    address public agentTrigger;
     
     enum ProposalStatus { Active, Resolved, Failed }
     enum Outcome { Undecided, Yes, No }
@@ -20,6 +21,8 @@ contract ProposalFutarchy is Ownable, ReentrancyGuard {
         uint256 fundingGoal;
         uint256 deadline;
         ProposalStatus status;
+        uint256 actualAPR;
+        bool yieldReported;
     }
     
     struct Market {
@@ -48,10 +51,18 @@ contract ProposalFutarchy is Ownable, ReentrancyGuard {
     event SharesBought(uint256 indexed id, address buyer, bool isYes, uint256 shares, uint256 amount);
     event FundingAdded(uint256 indexed id, address funder, uint256 amount);
     event MarketResolved(uint256 indexed id, Outcome outcome);
+    event YieldUpdated(uint256 indexed id, uint256 actualAPR);
     event Claimed(uint256 indexed id, address user, uint256 amount);
+    event AgentTriggerSet(address indexed agentTrigger);
     
     constructor(address _pyusd) Ownable(msg.sender) {
         PYUSD = IERC20(_pyusd);
+    }
+    
+    function setAgentTrigger(address _agentTrigger) external onlyOwner {
+        require(_agentTrigger != address(0), "Invalid address");
+        agentTrigger = _agentTrigger;
+        emit AgentTriggerSet(_agentTrigger);
     }
     
     function createProposal(
@@ -70,7 +81,9 @@ contract ProposalFutarchy is Ownable, ReentrancyGuard {
             targetAPR: targetAPR,
             fundingGoal: fundingGoal,
             deadline: block.timestamp + duration,
-            status: ProposalStatus.Active
+            status: ProposalStatus.Active,
+            actualAPR: 0,
+            yieldReported: false
         });
         
         emit ProposalCreated(id, msg.sender, strategyName, targetAPR);
@@ -85,7 +98,7 @@ contract ProposalFutarchy is Ownable, ReentrancyGuard {
         PYUSD.transferFrom(msg.sender, address(this), amount);
         
         Market storage market = markets[proposalId];
-        uint256 shares = amount; // Simplified 1:1 ratio
+        uint256 shares = amount;
         
         if (isYes) {
             market.yesShares += shares;
@@ -103,13 +116,13 @@ contract ProposalFutarchy is Ownable, ReentrancyGuard {
     function addFunding(uint256 proposalId, uint256 amount) external nonReentrant {
         require(proposals[proposalId].status == ProposalStatus.Active, "Not active");
         require(block.timestamp < proposals[proposalId].deadline, "Expired");
+        require(amount > 0, "Zero amount");
         
         PYUSD.transferFrom(msg.sender, address(this), amount);
         
         markets[proposalId].totalFunding += amount;
         positions[proposalId][msg.sender].fundingAmount += amount;
         
-        // Also give YES shares to funders
         markets[proposalId].yesShares += amount;
         positions[proposalId][msg.sender].yesShares += amount;
         
@@ -127,6 +140,27 @@ contract ProposalFutarchy is Ownable, ReentrancyGuard {
         emit MarketResolved(proposalId, markets[proposalId].outcome);
     }
     
+    function updateYield(
+        uint256 proposalId,
+        uint256 actualAPR,
+        bytes calldata /* proof */
+    ) external {
+        require(msg.sender == agentTrigger, "Only AgentTrigger");
+        require(markets[proposalId].resolved, "Not resolved");
+        require(!proposals[proposalId].yieldReported, "Already reported");
+        
+        proposals[proposalId].actualAPR = actualAPR;
+        proposals[proposalId].yieldReported = true;
+        
+        if (actualAPR >= proposals[proposalId].targetAPR) {
+            proposals[proposalId].status = ProposalStatus.Resolved;
+        } else {
+            proposals[proposalId].status = ProposalStatus.Failed;
+        }
+        
+        emit YieldUpdated(proposalId, actualAPR);
+    }
+    
     function claimWinnings(uint256 proposalId) external nonReentrant {
         require(markets[proposalId].resolved, "Not resolved");
         
@@ -134,20 +168,20 @@ contract ProposalFutarchy is Ownable, ReentrancyGuard {
         require(!position.claimed, "Already claimed");
         
         Market storage market = markets[proposalId];
+        Proposal storage proposal = proposals[proposalId];
         uint256 payout = 0;
         
         if (market.outcome == Outcome.Yes && position.yesShares > 0) {
             uint256 totalPool = market.yesCollateral + market.noCollateral;
             payout = (position.yesShares * totalPool) / market.yesShares;
-            
-            // Add funding yield
-            if (position.fundingAmount > 0) {
-                uint256 yield = (position.fundingAmount * proposals[proposalId].targetAPR) / 10000;
-                payout += yield;
-            }
         } else if (market.outcome == Outcome.No && position.noShares > 0) {
             uint256 totalPool = market.yesCollateral + market.noCollateral;
             payout = (position.noShares * totalPool) / market.noShares;
+        }
+        
+        if (position.fundingAmount > 0 && proposal.yieldReported) {
+            uint256 yield = (position.fundingAmount * proposal.actualAPR) / 10000;
+            payout += position.fundingAmount + yield;
         }
         
         require(payout > 0, "No winnings");
@@ -158,7 +192,6 @@ contract ProposalFutarchy is Ownable, ReentrancyGuard {
         emit Claimed(proposalId, msg.sender, payout);
     }
     
-    // View functions
     function getProposal(uint256 id) external view returns (Proposal memory) {
         return proposals[id];
     }
