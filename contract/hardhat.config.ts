@@ -1,11 +1,6 @@
 import type { HardhatUserConfig } from "hardhat/config";
-
 import hardhatToolboxMochaEthersPlugin from "@nomicfoundation/hardhat-toolbox-mocha-ethers";
 import { configVariable } from "hardhat/config";
-
-// LayerZero imports
-// import "@layerzerolabs/toolbox-hardhat";
-// import { EndpointId } from "@layerzerolabs/lz-definitions";
 
 const config: HardhatUserConfig = {
   plugins: [hardhatToolboxMochaEthersPlugin],
@@ -37,7 +32,7 @@ const config: HardhatUserConfig = {
     sepolia: {
       type: "http",
       chainType: "l1",
-      url: "https://rpc.sepolia.org",
+      url: "https://eth-sepolia.g.alchemy.com/v2/3TD4Qp-ol2qGp69d3LBv3lBWlHrvaynY",
       accounts: [configVariable("SEPOLIA_PRIVATE_KEY")],
     },
     hedera: {
