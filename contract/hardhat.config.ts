@@ -1,9 +1,13 @@
 import type { HardhatUserConfig } from "hardhat/config";
 import hardhatToolboxMochaEthersPlugin from "@nomicfoundation/hardhat-toolbox-mocha-ethers";
 import { configVariable } from "hardhat/config";
+import hashscanVerify from "hashscan-verify";
 
 const config: HardhatUserConfig = {
-  plugins: [hardhatToolboxMochaEthersPlugin],
+  plugins: [
+    hardhatToolboxMochaEthersPlugin,
+    hashscanVerify,
+  ],
   solidity: {
     profiles: {
       default: {
@@ -39,7 +43,13 @@ const config: HardhatUserConfig = {
       type: "http",
       chainType: "l1",
       url: "https://testnet.hashio.io/api",
+      chainId: 296, // ✅ FIXED
       accounts: [configVariable("HEDERA_PRIVATE_KEY")],
+    },
+  },
+  verify: {
+    etherscan: {
+      apiKey: configVariable("ETHERSCAN_API_KEY"),
     },
   },
 };

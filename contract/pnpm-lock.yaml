@@ -17,6 +17,9 @@ importers:
       dotenv:
         specifier: ^17.2.3
         version: 17.2.3
+      hashscan-verify:
+        specifier: ^0.2.0
+        version: 0.2.0(hardhat@3.0.9(bufferutil@4.0.9)(utf-8-validate@5.0.10))
     devDependencies:
       '@layerzerolabs/lz-definitions':
         specifier: ^3.0.142
@@ -1802,6 +1805,11 @@ packages:
 
   hash.js@1.1.7:
     resolution: {integrity: sha512-taOaskGt4z4SOANNseOviYDvjEJinIkRgmp7LbKP2YTTmVxWBl87s/uzK9r+44BclBSp2X7K1hqeNfz9JbBeXA==}
+
+  hashscan-verify@0.2.0:
+    resolution: {integrity: sha512-UdnHmMZtKUhHiFYm4YvbNIsugFiVfWmYgbDsddAFTsXjmpdFoNKX9FQJZcoNXBbNDqBWK71HMED4m6Zm8lOvVQ==}
+    peerDependencies:
+      hardhat: ^3.0.0
 
   hasown@2.0.2:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
@@ -5489,6 +5497,10 @@ snapshots:
     dependencies:
       inherits: 2.0.4
       minimalistic-assert: 1.0.1
+
+  hashscan-verify@0.2.0(hardhat@3.0.9(bufferutil@4.0.9)(utf-8-validate@5.0.10)):
+    dependencies:
+      hardhat: 3.0.9(bufferutil@4.0.9)(utf-8-validate@5.0.10)
 
   hasown@2.0.2:
     dependencies:
