@@ -97,7 +97,7 @@ async function main() {
     console.log("TEST 3: BUY YES SHARES (Betting on Success)");
     console.log("=".repeat(60) + "\n");
 
-    const betAmount = ethers.parseUnits("10", 6); // 10 PYUSD
+    const betAmount = ethers.parseUnits("1", 6); // 10 PYUSD
     
     console.log("💰 Approving PYUSD...");
     const approveTx = await pyusd.approve(FUTARCHY_ADDRESS, betAmount);
@@ -134,7 +134,7 @@ async function main() {
     console.log("TEST 5: ADD FUNDING TO STRATEGY");
     console.log("=".repeat(60) + "\n");
 
-    const fundAmount = ethers.parseUnits("50", 6); // 50 PYUSD
+    const fundAmount = ethers.parseUnits("1", 6); // 50 PYUSD
     
     console.log("💰 Approving PYUSD...");
     const approveTx2 = await pyusd.approve(FUTARCHY_ADDRESS, fundAmount);
