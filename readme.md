@@ -30,6 +30,28 @@ SLIME is a futarchy-based prediction market protocol that brings accountability 
 
 ---
 
+## 🏗️ Architecture
+```
+┌─────────────────┐
+│   Frontend      │  Next.js 15 + Tailwind v4
+│  (slime-fe)     │  MetaMask Integration
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│ Smart Contracts │  Hedera Testnet (Chain 296)
+│  - Futarchy     │  ProposalFutarchy.sol
+│  - AgentTrigger │  AgentTrigger.sol
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  Vincent Agent  │  Automated Strategy Execution
+│  - HBARX Stake  │  Yield Reporting
+│  - Yield Report │  On-chain Proofs
+└─────────────────┘
+```
+
 ## 📝 Smart Contracts (Hedera Testnet)
 
 ### Verified Contracts
