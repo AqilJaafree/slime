@@ -36,6 +36,9 @@ importers:
         specifier: ^2.18.2
         version: 2.18.2(@tanstack/query-core@5.90.5)(@tanstack/react-query@5.90.5(react@19.2.0))(@types/react@19.2.2)(bufferutil@4.0.9)(react@19.2.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(viem@2.38.4(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.1.12))(zod@4.1.12)
     devDependencies:
+      '@netlify/plugin-nextjs':
+        specifier: ^5.14.3
+        version: 5.14.3
       '@tailwindcss/postcss':
         specifier: ^4
         version: 4.1.16
@@ -479,6 +482,10 @@ packages:
 
   '@napi-rs/wasm-runtime@0.2.12':
     resolution: {integrity: sha512-ZVWUcfwY4E/yPitQJl481FjFo3K22D6qF0DuFH6Y/nbnE11GY5uguDxZMGXPQ8WQ0128MXQD7TnfHyK4oWoIJQ==}
+
+  '@netlify/plugin-nextjs@5.14.3':
+    resolution: {integrity: sha512-R4YIMjnVc1B1Sb64xkVHVQHzSbn6KarwlmtRJoiHA2I1vkM2eNKZ8gY/coDjxuUNY91pCjHA6uq7yiTO++BMiw==}
+    engines: {node: '>=18.0.0'}
 
   '@next/env@16.0.0':
     resolution: {integrity: sha512-s5j2iFGp38QsG1LWRQaE2iUY3h1jc014/melHFfLdrsMJPqxqDQwWNwyQTcNoUSGZlCVZuM7t7JDMmSyRilsnA==}
@@ -3772,6 +3779,8 @@ snapshots:
       '@emnapi/runtime': 1.6.0
       '@tybys/wasm-util': 0.10.1
     optional: true
+
+  '@netlify/plugin-nextjs@5.14.3': {}
 
   '@next/env@16.0.0': {}
 
