@@ -1,9 +1,10 @@
 import * as Sentry from '@sentry/node';
 import consola from 'consola';
 import type { Job } from '@whisthub/agenda';
+import { createAgenda, getAgenda } from '../agendaClient';
+import { executeHBARXJobDef } from '../jobs';
 
-import { createAgenda, getAgenda } from './agenda/agendaClient';
-import { executeHBARXJobDef } from './agenda/jobs';
+
 
 /**
  * Create and configure job worker with HBARX liquid staking
